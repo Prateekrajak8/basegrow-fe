@@ -76,7 +76,8 @@ const CampaignTable: React.FC<CampaignTableProps> = ({ accountId, onCampaignName
             setLoading(true);
             setError(null);
             // Use the accountId prop in the API call
-            const response = await axios.get(`/api/mailcamp/fetch-campaign-data?accountId=`);
+            const query = accountId ? `?accountId=${accountId}` : "";
+            const response = await axios.get(`/api/mailcamp/fetch-campaign-data${query}`);
             let responseData = response.data;
 
             responseData.sort((a: CampaignData, b: CampaignData) => {

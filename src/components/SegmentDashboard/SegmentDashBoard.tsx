@@ -102,6 +102,7 @@ const SegmentDashboard: React.FC<AnalyticsDashboardProps> = ({
     const country = useAppSelector((state) => state.app.country);
     const esp = useAppSelector((state) => state.app.esp);
     const domain = useAppSelector((state) => state.app.domain);
+    const campaignDomainCountry = useAppSelector((state) => state.app.campaignDomainCountry);
     const [showCalendar, setShowCalendar] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [showLabels, setShowLabels] = useState(false);
@@ -271,9 +272,22 @@ const SegmentDashboard: React.FC<AnalyticsDashboardProps> = ({
         domain: string | null,
         esp: string | null
     ): string | number => {
+        const campaignDomainListIdMap: Record<string, number> = {
+            "travelwhale nl": 203540,
+            "favotrip nl": 242740,
+            "travelwhale de": 217478,
+            "travelwhale fr": 1261035,
+            "travelwhale uk": 1261054,
+            "travelwhale dk": 1259703,
+        };
+        const campaignFallback =
+            campaignDomainCountry
+                ? campaignDomainListIdMap[campaignDomainCountry.toLowerCase()]
+                : undefined;
+
         // Return "all" if either country or domain is "all"
-        if (country === "all" || domain === "all") {
-            return "all";
+        if (country === "all" || domain === "all" || country === "All" || domain === "All" || !country || !domain) {
+            return campaignFallback ?? "all";
         }
 
         // Define your mapping logic here
@@ -328,7 +342,7 @@ const SegmentDashboard: React.FC<AnalyticsDashboardProps> = ({
             return "all";
         }
         else {
-            return "all"; // Default to "all" if no match
+            return campaignFallback ?? "all"; // Default to "all" if no match
         }
     };
     const fetchAndSetData = async () => {
